@@ -66,7 +66,7 @@ public class Babam : MonoBehaviour
 
             obj.transform.position = new Vector2(9, 5);
             obj.GetComponent<SpriteRenderer>().flipX = true;
-            while (Vector2.Distance(obj.transform.position, targetPos2) >= 0.35f)
+            while (Vector2.Distance(obj.transform.position, targetPos2) >= 1f)
             {
                 obj.transform.position = Vector2.MoveTowards(obj.transform.position, targetPos2, 0.2f);
                 yield return new WaitForSeconds(0.03f);
@@ -82,9 +82,9 @@ public class Babam : MonoBehaviour
             yield return new WaitForSeconds(1f);
             whyRG.SetActive(false);
             Destroy(obj);
-            if (!this.canStart)
+            if (!canStart)
             {
-                this.canStart = true;
+                canStart = true;
                 startButton.AddToClassList("start_button_fade");
             }
         }

@@ -1,32 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject bum;
     public GameObject fast_load;
     public GameObject player;
-    public GameObject[] falls;
-    GameObject ui;
     AudioSource beatBox;
     AudioSource bgm;
-
-    Button resumeButton;
+    public float score;
+    public float spawnCool;
+    public List<Objective> obj;
+    public Text scoreText;
 
     public bool alive = false;
     void Start()
     {
-        ui = GameObject.Find("UI");
-        var root = ui.GetComponent<UIDocument>().rootVisualElement;
-
-        resumeButton = root.Q<Button>("resume");
-
-        resumeButton.RegisterCallback<ClickEvent>(Resume);
-
         beatBox = GameObject.Find("beatBox").GetComponent<AudioSource>();
         bgm = GameObject.Find("bgm").GetComponent<AudioSource>();
 
@@ -35,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator LoadAnim()
     {
-        resumeButton.style.display = DisplayStyle.None;
+        BackgroundScrolling.Instance.speed = 0;
         alive = false;
         fast_load.SetActive(true);
         beatBox.Play();
@@ -67,7 +58,7 @@ public class GameManager : MonoBehaviour
             {
                 var renderer  = child.GetComponent<SpriteRenderer>();
 
-                renderer.color = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f), 1);
+                renderer.color = new Color(UnityEngine.Random.Range(0, 1f), UnityEngine.Random.Range(0, 1f), UnityEngine.Random.Range(0, 1f), 1);
             }
             yield return new WaitForSeconds(0.1f);
         }
@@ -89,38 +80,46 @@ public class GameManager : MonoBehaviour
             renderer.color = Color.blue;
         }
         yield return new WaitForSeconds(0.1f);
+        PlayerMove.Instance.super = 0;
+        PlayerMove.Instance.useSuper = 0;
         fast_load.SetActive(false);
 
         yield return new WaitForSeconds(0.2f);
         bgm.Play();
+
+        spawnCool = 0;
+
         alive = true;
-        StartCoroutine(Gaming());
+        BackgroundScrolling.Instance.speed = 600;
 
-        bum.SetActive(true);
-        resumeButton.style.display = DisplayStyle.Flex;
-        for (float i = 1; i >= 0; i -= 0.1f)
-        {
-            var renderer = bum.GetComponent<SpriteRenderer>();
-
-            renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, i);   
-
-            yield return new WaitForSeconds(0.03f);
-        }
-        bum.SetActive(false);
+        score = 0;
     }
 
-    void Resume(ClickEvent ev)
-    {
-        SceneManager.LoadScene("SampleScene");
-    }
+    void Update() {
+        var yScreenHalfSize = Camera.main.orthographicSize;
+        var xScreenHalfSize = yScreenHalfSize * Camera.main.aspect;
+        if (alive) {
+            score += Time.deltaTime * 9;
 
-    IEnumerator Gaming()
-    {
-       while (alive)
-        {
-            yield return new WaitForSeconds(Random.Range(1f, 2f));
-            var fall = Instantiate(falls[Random.Range(0, falls.Length)], new Vector2(Random.Range(-7, 7), 6), Quaternion.identity);
-            Destroy(fall, 2f);
+            BackgroundScrolling.Instance.speed = 600 + score * 0.05f;
+
+            if (PlayerMove.Instance.useSuper > 0) {
+                BackgroundScrolling.Instance.speed = 2000 + score * 0.05f;
+            }
+
+            if (spawnCool > 3 - score * 0.008f + UnityEngine.Random.Range(0f, 2f)) {
+                spawnCool = 0;
+
+                int rv = UnityEngine.Random.Range(0, obj.Count);
+                if (rv >= obj.Count) rv = obj.Count - 1;
+                Objective ob = obj[rv];
+
+                Instantiate(ob.gameObject, new Vector3(xScreenHalfSize, ob.yVal), quaternion.identity);
+            }
+
+            spawnCool += Time.deltaTime;
         }
+
+        scoreText.text = "<color=lime>Score: </color> " + ((int)score).ToString();
     }
 }

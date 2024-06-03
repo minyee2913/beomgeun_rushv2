@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/common.uss?fileID=7433441132597879392&amp;guid=a6bec04a6d97b8b4891ce95f5b80b0eb&amp;type=3#common" />
-    <ui:Button display-tooltip-when-elided="true" name="start_button" class="start_button">
-        <ui:Label text="GAME START" display-tooltip-when-elided="true" name="start_label" class="start_label" style="top: -4px; left: -60px; height: 198px; width: 688px; font-size: 70px;" />
+    <ui:Button display-tooltip-when-elided="true" name="start_button" class="start_button" style="border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0;">
+        <ui:Label text="GAME START" display-tooltip-when-elided="true" name="start_label" class="start_label" style="top: -4px; left: -60px; height: 198px; width: 688px; font-size: 70px; -unity-font-definition: initial; -unity-font: url(&apos;project://database/Assets/fonts/CookieRun%20Bold.ttf?fileID=12800000&amp;guid=ecf3f33ea15e74245bb277ba8205b7db&amp;type=3#CookieRun Bold&apos;);" />
     </ui:Button>
 </ui:UXML>
